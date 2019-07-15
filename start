@@ -39,7 +39,7 @@ startOptions() {
 	    case $start in
 	        "Compile" ) compileOptions; break;;
 			"Decompile" ) decompileOptions; break;;
-			"Objection Instrument" ) objectionOptions; break;;
+			"Objection Instrument (WIP)" ) objectionOptions; break;;
 			"Sign" ) signOptions; break;;
 			"Zipalign" ) zipalignOptions; break;;
 			"Framework Options" ) frameworkOptions; break;;
@@ -119,7 +119,7 @@ decompile() {
 
 objectionOptions() {
 	echo " "
-	echo "What would you like to do?"
+	echo "What would you like to do? (WARNING: THIS IS STILL A WORK IN PROGRESS FUNCTION)"
 	select patchapk in "Patch all APKs" "Patch a single APK" "Go back"; do
 	    case $patchapk in
 	        "Decompile all APKs" ) objection all apk; break;;
