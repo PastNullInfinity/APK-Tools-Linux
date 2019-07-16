@@ -39,7 +39,7 @@ startOptions() {
 	    case $start in
 	        "Compile" ) compileOptions; break;;
 			"Decompile" ) decompileOptions; break;;
-			"Objection Instrument (WIP)" ) objectionOptions; break;;
+			"Objection Instrument" ) objectionOptions; break;;
 			"Sign" ) signOptions; break;;
 			"Zipalign" ) zipalignOptions; break;;
 			"Framework Options" ) frameworkOptions; break;;
@@ -119,10 +119,13 @@ decompile() {
 
 objectionOptions() {
 	echo " "
-	echo "What would you like to do? (WARNING: THIS IS STILL A WORK IN PROGRESS FUNCTION)"
+	echo "What would you like to do?"
+	echo " "
+	echo -e "\e[1;91m (Defaults to armeabi-v7a)"
+	echo -e "\e[0m "
 	select patchapk in "Patch all APKs" "Patch a single APK" "Go back"; do
 	    case $patchapk in
-	        "Decompile all APKs" ) objection all apk; break;;
+	        "Patch all APKs" ) objection all apk; break;;
 			"Patch a single APK" ) objection single apk; break;;
 			"Go back" ) startOptions; break;;
 	    esac
@@ -130,23 +133,33 @@ objectionOptions() {
 }
 
 objection() {
+	local ARCH='armeabi-v7a'
 	if [ $1 == "all" ]; then
 		cd "$WORKING"
-		for f in *."$2"; do "$OBJECTION" patchapk -s "$WORKING"/"$f" ;	done
-		cd ..
+		echo "Which architecture do you want to compile to? (enter to skip)"
+		echo -n "[armeabi-v7a]/[other] > "
+		read arch
+		for f in *."$2"; do "$OBJECTION" patchapk -s "$WORKING"/"$f" --architecture $ARCH ;	
+		done
+		mv *.objection.apk $OUT
+		cd "$ROOT"
 	else
 		cd "$WORKING"
 		i=1
-		for f in *."$2"; do compList[i++]="${f%/}"; done
-		for((i=1;i<=${#compList[@]};i++)); do echo $i")" "${compList[i]}";	done
+		for f in *."$2"; do objList[i++]="${f%/}"; done
+		for((i=1;i<=${#objList[@]};i++)); do echo $i")" "${objList[i]}";	done
 		echo "which $2 do you want?"
 		echo -n "> "
 		read i
-		"$OBJECTION" patchapk -s "$WORKING"/"${compList[$i]}"
+		echo "Which architecture do you want to compile to? (enter to skip)"
+		echo -n "(armeabi-v7a/other) > "
+		read arch
+		"$OBJECTION" patchapk -s "$WORKING"/"${objList[$i]}" --architecture $ARCH
+		mv *.objection.apk $OUT
 		cd "$ROOT"
 	fi
 
-	compileOptions
+	objectionOptions
 	
 }
 
