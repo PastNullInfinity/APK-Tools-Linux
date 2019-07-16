@@ -151,10 +151,14 @@ objection() {
 		echo "which $2 do you want?"
 		echo -n "> "
 		read i
-		echo "Which architecture do you want to compile to? (enter to skip)"
-		echo -n "(armeabi-v7a/other) > "
+		echo "Which architecture do you want to compile to? (enter to skip, \"adb\" to tell objection to detect the arch through ADB)"
+		echo -n "(armeabi-v7a/adb/other) > "
 		read arch
+		if [$ARCH =="adb"]; then
+			"$OBJECTION" patchapk -s "$WORKING"/"${objList[$i]}"
+		else
 		"$OBJECTION" patchapk -s "$WORKING"/"${objList[$i]}" --architecture $ARCH
+		fi
 		mv *.objection.apk $OUT
 		cd "$ROOT"
 	fi
@@ -289,7 +293,7 @@ deleteOptions() {
 delete() {
 
 	echo " "
-	echo "What would you like to do?"
+	echo "Are you sure?"
 	select sure in "Yes" "No"; do
 	    case $sure in
 	        "Yes" ) AREYOUSURE=1 ;break;;
